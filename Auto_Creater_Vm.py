@@ -33,7 +33,7 @@ def Vm_Create(Vm_Creater_Sum=1):
     time.sleep(60)
     for index in range(Vm_Creater_Sum):
         Full_Vm_Creater_Path = os.path.join(Vm_Creater_Base_Paht, Vm_Creater_Cluster,Vm_Creater_HostName + "_" + str(index + 1),Vm_Creater_HostName + "_" + str(index + 1) + ".vmx")
-        Vm_Host_Set_Ip_Cmd='"' + Vmrun_Path + '" -T ws -gu root -gp djlyly runProgramInGuest "' + Full_Vm_Creater_Path + '" /root/set.sh '+ str(10 + index)
+        Vm_Host_Set_Ip_Cmd='"' + Vmrun_Path + '" -T ws -gu root -gp djlyly runProgramInGuest "' + Full_Vm_Creater_Path + '" /root/set.sh '+ str(10 + index) + '"'
         print("Debug:开始设置IP-", index)
         os.popen(Vm_Host_Set_Ip_Cmd)
         time.sleep(2)
