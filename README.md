@@ -17,6 +17,7 @@
     - windows主机需要python2/3环境
     - 您的模板主机Centos需要/root/set.sh脚本
     - 自动设置从xx.xx.xx.10开始
+0. 请将set.sh放入模板机/root/set.sh (参数请自行更具实际情况修改)
 1. 根据上述参数描述更改参数
 2. 修改Vm_Create(3)中的参数
 3. python Auto_Create_Vm.py
@@ -30,3 +31,9 @@
     - 批量修改IP地址
     - 批量关机(init 0)
     - 批量快照
+    
+- 0.0.2
+    - 时间：2020.03.20
+    - 代码逻辑分离，用于可使用web页面调用
+    - 自动查找vmrun.exe
+    - 自动判断克隆任务是否完成

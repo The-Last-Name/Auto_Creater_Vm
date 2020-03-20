@@ -34,21 +34,35 @@ def Vm_Create(Vmrun_Path,Full_Vm_Template_Path,Vm_Template_Snapshot_Name,Full_Vm
     return Process.pid
 
 def Vm_Start(Vmrun_Path,Full_Vm_Creater_Path):
+    print("Debug:开始开机",Full_Vm_Creater_Path)
     Vm_Satrt_Cmd='"' + Vmrun_Path + '" -T ws start "' + Full_Vm_Creater_Path + '"'
     os.popen(Vm_Satrt_Cmd)
 
 def Vm_Host_Set_Ip(Vmrun_Path,Full_Vm_Creater_Path,Vm_Host_Passwd,Ip_Addr):
-    Vm_Host_Set_Ip_Cmd = '"' + Vmrun_Path + '" -T ws -gu root -gp ' + Vm_Host_Passwd + ' runProgramInGuest "' + Full_Vm_Creater_Path + '" /root/set.sh ' + Ip_Addr + '"'
+    print("Debug:设置IP地址", Full_Vm_Creater_Path)
+    Vm_Host_Set_Ip_Cmd = '"' + Vmrun_Path + '" -T ws -gu root -gp ' + Vm_Host_Passwd + ' runProgramInGuest "' + Full_Vm_Creater_Path + '" /root/set.sh ' + str(Ip_Addr)
     os.popen(Vm_Host_Set_Ip_Cmd)
+    time.sleep(1)
     Vm_Host_Close_Cmd = '"' + Vmrun_Path + '" -T ws -gu root -gp ' + Vm_Host_Passwd + ' runProgramInGuest "' + Full_Vm_Creater_Path + '" /sbin/init 0'
     os.popen(Vm_Host_Close_Cmd)
 
 def Vm_Snapshot(Vmrun_Path,Full_Vm_Creater_Path):
+    print("Debug:拍摄快照", Full_Vm_Creater_Path)
     Vm_Snapshot_Cmd = '"' + Vmrun_Path + '" -T ws snapshot "' + Full_Vm_Creater_Path + '" "' + '快照 1' + '"'
     os.popen(Vm_Snapshot_Cmd)
 
 
 if  __name__=="__main__":
+
+    Vmrun_Path=""
+    Vm_Template_Path = r"F:\Virtual Machines\模板机"
+    Vm_Template_HostName = "CentOS_7"
+    Vm_Template_Snapshot_Name = "快照 2"
+    Vm_Creater_Base_Paht = "F:\Virtual Machines"
+    Vm_Creater_Cluster = "test"
+    Vm_Creater_HostName = "test"
+    Vm_Host_Passwd="djlyly"
+    Vm_Create_Sum=1
 
     if Scan_Window_Install_Vm_Path() != "":
         Vmrun_Path = Scan_Window_Install_Vm_Path()
@@ -57,8 +71,10 @@ if  __name__=="__main__":
 
     #核心逻辑去需要编写
     Pid_List=[]
-    for i in range(5):
-        Pid_List.append(Vm_Create(Vmrun_Path,r"F:\Virtual Machines\模板机\CentOS_7\CentOS_7.vmx","快照 2",r"F:\Virtual Machines\test\test_"+str(i)+r"\test"+ str(i) +".vmx","test_"+str(i)))
+    Full_Vm_Template_Path = os.path.join(Vm_Template_Path, Vm_Template_HostName, Vm_Template_HostName + ".vmx")
+    for index in range(Vm_Create_Sum):
+        Full_Vm_Creater_Path = os.path.join(Vm_Creater_Base_Paht, Vm_Creater_Cluster,Vm_Creater_HostName + "_" + str(index + 1),Vm_Creater_HostName + "_" + str(index + 1) + ".vmx")
+        Pid_List.append(Vm_Create(Vmrun_Path,Full_Vm_Template_Path,Vm_Template_Snapshot_Name,Full_Vm_Creater_Path,Vm_Creater_HostName+ "_" +str(index + 1)))
 
     while Pid_List != []:
         for Pid_index in Pid_List:
@@ -67,5 +83,21 @@ if  __name__=="__main__":
         time.sleep(3)
     print("Debug:克隆完成")
 
-    #处理ip地址问题
+    # 全部开机地址问题
+    for index in range(Vm_Create_Sum):
+        Full_Vm_Creater_Path = os.path.join(Vm_Creater_Base_Paht, Vm_Creater_Cluster, Vm_Creater_HostName + "_" + str(index + 1), Vm_Creater_HostName + "_" + str(index + 1) + ".vmx")
+        Vm_Start(Vmrun_Path,Full_Vm_Creater_Path)
+
+    # 等待开机
+    time.sleep(60)
+    for index in range(Vm_Create_Sum):
+        Full_Vm_Creater_Path = os.path.join(Vm_Creater_Base_Paht, Vm_Creater_Cluster,Vm_Creater_HostName + "_" + str(index + 1),Vm_Creater_HostName + "_" + str(index + 1) + ".vmx")
+        Vm_Host_Set_Ip(Vmrun_Path,Full_Vm_Creater_Path,Vm_Host_Passwd,10+index)
+
+    # 等待关机
+    time.sleep(60)
+    for index in range(Vm_Create_Sum):
+        Full_Vm_Creater_Path = os.path.join(Vm_Creater_Base_Paht, Vm_Creater_Cluster,Vm_Creater_HostName + "_" + str(index + 1),Vm_Creater_HostName + "_" + str(index + 1) + ".vmx")
+        Vm_Snapshot(Vmrun_Path,Full_Vm_Creater_Path)
+
 
