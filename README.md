@@ -3,13 +3,15 @@
 帮助您快速创建虚拟机并使用
 
 ## 参数帮助
-- Vmrun_Path：您的VMware Workstation安装目录下vmrun.exe
+- Vmrun_Path：您的VMware Workstation安装目录下vmrun.exe(已可以自动查找)
 - Vm_Template_Path：您的模板主机基础路径
 - Vm_Template_HostName：模板主机基础路径下的主机名
 - Vm_Template_Snapshot_Name：模板主机的快照名,基于那个快照做克隆
 - Vm_Creater_Base_Paht：新创建的主机基础路径
 - Vm_Creater_Cluster：新创建主机的集群名
 - Vm_Creater_HostName：新创建主机的主机名, "_"号跟数字1开始
+- Vm_Host_Passwd：您模板机root的密码
+- Vm_Create_Sum：需要克隆的数量
 
 ## 使用帮助
 - 重要说明
