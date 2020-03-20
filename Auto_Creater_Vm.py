@@ -6,7 +6,7 @@
 # Python version: 3
 
 
-import os,time
+import os,time,winreg
 
 Vmrun_Path=r"D:\Program Files (x86)\VMware\VMware Workstation\vmrun.exe"
 Vm_Template_Path=r"F:\Virtual Machines\模板机"
@@ -15,6 +15,23 @@ Vm_Template_Snapshot_Name="快照 2"
 Vm_Creater_Base_Paht="F:\Virtual Machines"
 Vm_Creater_Cluster="test"
 Vm_Creater_HostName="test"
+
+def Scan_Window_Install_Vm_Path():
+    Regedit_Key = [r'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall',r'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall']
+    for Regedit_Key_Index in Regedit_Key:
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, Regedit_Key_Index, 0, winreg.KEY_ALL_ACCESS)
+        for Regedit_Key__Sub_Index in range(0, winreg.QueryInfoKey(key)[0] - 1):
+            try:
+                key_name = winreg.EnumKey(key, Regedit_Key__Sub_Index)
+                key_path = Regedit_Key_Index + '\\' + key_name
+                each_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key_path, 0, winreg.KEY_ALL_ACCESS)
+                DisplayName, REG_SZ = winreg.QueryValueEx(each_key, 'DisplayName')
+                if DisplayName == 'VMware Workstation':
+                    global Vmrun_Path
+                    Vm_Install_Path,_ = winreg.QueryValueEx(each_key, 'DisplayIcon')
+                    Vmrun_Path = (os.path.join(os.path.dirname(Vm_Install_Path),"vmrun.exe"))
+            except WindowsError:
+                pass
 
 def Vm_Create(Vm_Creater_Sum=1):
     Full_Vm_Template_Path=os.path.join(Vm_Template_Path, Vm_Template_HostName, Vm_Template_HostName + ".vmx")
@@ -49,4 +66,5 @@ def Vm_Create(Vm_Creater_Sum=1):
         os.popen(Vm_Snapshot_Cmd)
 
 #默认IP从10开始设置
+Scan_Window_Install_Vm_Path()
 Vm_Create(3)
