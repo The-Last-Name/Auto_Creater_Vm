@@ -61,7 +61,7 @@ if  __name__=="__main__":
     Vm_Creater_Base_Paht = "F:\Virtual Machines"
     Vm_Creater_Cluster = "test"
     Vm_Creater_HostName = "test"
-    Vm_Host_Passwd="djlyly"
+    Vm_Host_Passwd=""
     Vm_Create_Sum=1
 
     if Scan_Window_Install_Vm_Path() != "":
